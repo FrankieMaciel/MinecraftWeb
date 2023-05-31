@@ -1,0 +1,44 @@
+:root {
+    --skyColor: #8fbfce;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+html {
+    height: 100%;
+    background: rgb(219,232,230);
+    background: linear-gradient(0deg, rgba(219,232,230,1) 0%, rgba(154,232,240,1) 50%, rgba(127,218,236,1) 100%);
+}
+
+body {
+    height: 100%;
+    overflow: hidden;
+}
+
+.cube {
+    position: absolute;
+    /* transition: bottom 0.1s ease, left 0.1s ease; */
+}
+
+#space {
+    --camera-x: 0px;
+    --camera-y: -600px;
+}
+
+#zone1 {
+    position: relative;
+    z-index: -1;
+    isolation: isolate;
+    box-shadow: inset 5px block;
+    filter: brightness(85%);
+}
+
+#zone2 {
+    position: relative;
+    filter: drop-shadow(0px 0px 5px black);
+}
+
