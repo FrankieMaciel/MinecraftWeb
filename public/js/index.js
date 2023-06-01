@@ -11,6 +11,10 @@ let selfDestroy = (block) => {
   block.remove();
 }
 
+import player from './player/player.js';
+let jogador = new player;
+jogador.walkFoward();
+
 let createBlock = (x, world) => {
 
     let block = document.createElement('div');
