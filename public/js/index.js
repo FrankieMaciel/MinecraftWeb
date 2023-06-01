@@ -1,4 +1,3 @@
-'use strict';
 let space = document.getElementById('space');
 const zone1 = document.getElementById('zone1');
 const zone2 = document.getElementById('zone2');
@@ -17,7 +16,7 @@ let createBlock = (x, world) => {
     let block = document.createElement('div');
     block.classList.add('cube');
 
-    block.style.backgroundImage = "url('./img/grassblock.png')"; 
+    block.style.backgroundImage = "url('../img/grassblock.png')"; 
     block.style.backgroundSize = "contain";
     // block;style.backgroundRepeat = " no-repeat";
 
@@ -46,7 +45,7 @@ let createGeneralBlock = (x, y, world) => {
   let block = document.createElement('div');
   block.classList.add('cube');
 
-  block.style.backgroundImage = "url('./img/dirtblock.jpg')"; 
+  block.style.backgroundImage = "url('../img/dirtblock.jpg')"; 
   block.style.backgroundSize = "contain";
   // block;style.backgroundRepeat = " no-repeat";
 
