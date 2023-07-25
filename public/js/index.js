@@ -1,95 +1,57 @@
 let space = document.getElementById('space');
+// const ctx = canvas.getContext("2d");
+
 const zone1 = document.getElementById('zone1');
 const zone2 = document.getElementById('zone2');
-let blockSize = 50;
-
-let worldSize = 30;
-let worldDeep = 10;
-let worldBaseY = 50;
-
-let selfDestroy = (block) => {
-  block.remove();
-}
 
 import player from './player/player.js';
 let jogador = new player;
 jogador.walkFoward();
 
-let createBlock = (x, world) => {
+import world from './world/world.js';
 
-    let block = document.createElement('div');
-    block.classList.add('cube');
+let w = new world('teste', '123', space);
+w.generateWorld();
 
-    block.style.backgroundImage = "url('../img/grassblock.png')"; 
-    block.style.backgroundSize = "contain";
-    // block;style.backgroundRepeat = " no-repeat";
+let inventory = document.createElement('div');
+inventory.style.width = `${30}rem`;
+inventory.style.height = `${30}rem`;
+inventory.style.position = 'absolute';
+inventory.style.zIndex = '10';
 
-    block.style.width = `${blockSize}px`;
-    block.style.height = `${blockSize}px`;
-    block.style.left = `calc(${x * blockSize}px + var(--camera-x))`;
+inventory.style.backgroundImage = `url('/img/inventory.png')`; 
+inventory.style.backgroundSize = "contain";
+inventory.style.backgroundRepeat = 'no-repeat';
+inventory.style.display = "none";
+inventory.style.justifyContent = 'center';
 
-    block.addEventListener('click', () => {
-      selfDestroy(block);
-    });
+let invDiv = document.getElementById('inventory');
+invDiv.style.width = '100%';
+invDiv.style.height = '100%';
+invDiv.style.justifyContent = 'center';
+invDiv.style.alignItems = 'center';
+invDiv.style.display = 'flex';
+invDiv.style.zIndex = '10';
 
-    let y = parseInt(perlin.get(x / 20, x / 20) * 10);
-    console.log(y);
+invDiv.appendChild(inventory);
 
-    let alturayFormula = (y * blockSize) + worldDeep * 20;
-
-    block.style.bottom = `calc(${alturayFormula}px + var(--camera-y))`;
-
-    world.appendChild(block);
-
-    generateUnderGroundBlocks(x, alturayFormula, world);
-}
-
-let createGeneralBlock = (x, y, world) => {
-
-  let block = document.createElement('div');
-  block.classList.add('cube');
-
-  block.style.backgroundImage = "url('../img/dirtblock.jpg')"; 
-  block.style.backgroundSize = "contain";
-  // block;style.backgroundRepeat = " no-repeat";
-
-  block.style.width = `${blockSize}px`;
-  block.style.height = `${blockSize}px`;
-  block.style.left = `calc(${x * blockSize}px + var(--camera-x))`;
-
-  block.addEventListener('click', () => {
-    selfDestroy(block);
-  });
-
-  // let y = parseInt(perlin.get(x / 10, x / 10) * 10);
-  // console.log(y);
-  block.style.bottom = `calc(${y}px + var(--camera-y))`;
-
-  world.appendChild(block);
-}
-
-let generateUnderGroundBlocks = (x, Yinit, element) => {
-  for (let y = 1; y < worldDeep; y++) {
-    createGeneralBlock(x, Yinit - (y * blockSize), element);
-  }
-}
-
-let generateWorld = () => {
-    perlin.seed()
-    for (let x = 0; x < worldSize; x++) {
-        createBlock(x, zone1);
-    }
-    perlin.seed()
-    for (let x = 0; x < worldSize; x++) {
-        createBlock(x, zone2);
-    }
-}
-
-generateWorld();
+let inventoryIsOpen = false;
 
 document.addEventListener('keydown', function(event) {
-  const key = event.key; // "a", "1", "Shift", etc.
-  moveWorld(key);
+  const key = event.key;
+  if (!inventoryIsOpen) {
+    moveWorld(key);
+  }
+
+  if (key === 'e') {
+    if (inventory.style.display === "none") {
+      inventory.style.display = "block";
+      inventoryIsOpen = true;
+    } else {
+      inventory.style.display = "none";
+      inventoryIsOpen = false;
+    }
+  }
 });
 
 

@@ -2,7 +2,8 @@ function getTexture(id) {
 
   const textures = [
     'grassblock.png',
-    'dirtblock.jpg'
+    'dirtblock.jpg',
+    'stone.png'
   ]
 
   return textures[id];

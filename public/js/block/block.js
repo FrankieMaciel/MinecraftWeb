@@ -1,4 +1,4 @@
-import { getTexture } from "./textures";
+import { getTexture } from "./textures.js";
 
 // Size of a block in pixels
 const blockSize = 50;
@@ -22,29 +22,30 @@ class block {
     this.block;
   }
 
-  breakSelf() {
-    this.block.remove();
+  breakSelf(block) {
+    block.remove();
   }
 
   create() {
     let block = document.createElement('div');
+    this.block = block;
+
     block.classList.add('block');
 
     block.style.width = `${blockSize}px`;
     block.style.height = `${blockSize}px`;
 
-    block.style.backgroundImage = `url('../img/${getTexture(this.id)})`; 
+    block.style.backgroundImage = `url('/img/${getTexture(this.id)}`; 
     block.style.backgroundSize = "contain";
 
     block.style.left = `calc(${this.x * blockSize}px + var(--camera-x))`;
-    block.style.bottom = `calc(${this.y}px + var(--camera-y))`;
+    block.style.bottom = `calc(${this.y * blockSize}px + var(--camera-y))`;
 
     block.addEventListener('click', () => {
-      breakSelf();
+      this.breakSelf(this.block);
     });
 
-    this.block = block;
-    this.world.appendChild(block);
+    this.world.appendChild(this.block);
   }
 }
 
