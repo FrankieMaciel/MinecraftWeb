@@ -67,9 +67,9 @@ function renderSky(playerCamera) {
   let camPosY = (playerCamera.y + 30);
   
   if (camPosY <= 0) camPosY = 1;
-  if (camPosY > config.WorldMaxHeight) camPosY = config.WorldMaxHeight;
+  if (camPosY > config.WorldMaxHeight / 2) camPosY = (config.WorldMaxHeight / 2);
 
-  let percentage = calculatePercentage(camPosY, config.WorldMaxHeight);
+  let percentage = calculatePercentage(camPosY, (config.WorldMaxHeight / 2));
 
   const weight1 = percentage; // Peso para a cor 1
   const weight2 = 100 - percentage; // Peso para a cor 2
