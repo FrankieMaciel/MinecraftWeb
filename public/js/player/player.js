@@ -1,18 +1,34 @@
-import { walkFoward as walk } from './playermovement.js';
+import Camera from './camera.js';
+import config from '../config.js';
 
-class player {
-  constructor (
-    name,
-  ) {
-    this.name = name;
-    this.life = 9;
-    this.speed = 5;
-    this.jumpForce = 10;
+export default class Player {
+  constructor() {
+    this.RenderDistanceX = config.RenderDistanceX;
+    this.RenderDistanceY = config.RenderDistanceY;
+    this.camera = new Camera();
+    this.speed = config.movementAmount;
   }
 
-  walkFoward() {
-    walk();
+  onKeyDown(key) {
+    const action = keybinds[key];
+    if (action) 
+    {
+      action(this.camera, this.speed);
+    }
   }
 }
 
-export default player;
+const keybinds = {
+  'a': (camera, movementAmount) => {
+    camera.x -= movementAmount;
+  },
+  's': (camera, movementAmount) => {
+    camera.y += movementAmount;
+  },
+  'w': (camera, movementAmount) => {
+    camera.y -= movementAmount;
+  },
+  'd': (camera, movementAmount) => {
+    camera.x += movementAmount;
+  }
+}

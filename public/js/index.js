@@ -1,83 +1,48 @@
-let space = document.getElementById('space');
-// const ctx = canvas.getContext("2d");
+import config from './config.js';
 
-const zone1 = document.getElementById('zone1');
-const zone2 = document.getElementById('zone2');
+let ctx = config.ctx;
 
-import player from './player/player.js';
-let jogador = new player;
-jogador.walkFoward();
+ctx.canvas.width  = config.winWidth;
+ctx.canvas.height = config.winHeigth;
 
-import world from './world/world.js';
+import Player from './player/player.js';
+import World from './world/world.js';
 
-let w = new world('teste', '123', space);
-w.generateWorld();
+let newPlayer = new Player();
+let newWorld = new World('NewWorld', newPlayer);
 
-let inventory = document.createElement('div');
-inventory.style.width = `${30}rem`;
-inventory.style.height = `${30}rem`;
-inventory.style.position = 'absolute';
-inventory.style.zIndex = '10';
+newWorld.render(newPlayer.camera);
 
-inventory.style.backgroundImage = `url('/img/inventory.png')`; 
-inventory.style.backgroundSize = "contain";
-inventory.style.backgroundRepeat = 'no-repeat';
-inventory.style.display = "none";
-inventory.style.justifyContent = 'center';
+const keysPressed = {};
 
-let invDiv = document.getElementById('inventory');
-invDiv.style.width = '100%';
-invDiv.style.height = '100%';
-invDiv.style.justifyContent = 'center';
-invDiv.style.alignItems = 'center';
-invDiv.style.display = 'flex';
-invDiv.style.zIndex = '10';
-
-invDiv.appendChild(inventory);
-
-let inventoryIsOpen = false;
-
-document.addEventListener('keydown', function(event) {
-  const key = event.key;
-  if (!inventoryIsOpen) {
-    moveWorld(key);
-  }
-
-  if (key === 'e') {
-    if (inventory.style.display === "none") {
-      inventory.style.display = "block";
-      inventoryIsOpen = true;
-    } else {
-      inventory.style.display = "none";
-      inventoryIsOpen = false;
-    }
-  }
+document.addEventListener('keydown', (event) => {
+  if (!event.repeat)
+    keysPressed[event.key] = event.key;
 });
 
+document.addEventListener('keyup', (event) => {
+  if (!event.repeat)
+    delete keysPressed[event.key];
+});
 
-let cX = 0;
-let cY = -600;
-let moveWorld = (key) => {
-
-  let speed = 15;
-  let style = space.style;
-
-  if (key === 'w') {
-    cY -= speed; 
+function updateFrame() {
+  for (let key in keysPressed) {
+    newPlayer.onKeyDown(keysPressed[key]);
   }
-
-  if (key === 's') {
-    cY += speed; 
-  }
-
-  if (key === 'a') {
-    cX += speed;
-  }
-
-  if (key === 'd') {
-    cX -= speed;
-  }
-
-  space.style.setProperty('--camera-x', `${cX}px`);
-  space.style.setProperty('--camera-y', `${cY}px`);
+  newWorld.render(newPlayer.camera);
+  requestAnimationFrame(updateFrame);
 }
+
+updateFrame();
+
+function resize() {
+  config.winWidth = window.innerWidth;
+  config.winHeigth = window.innerHeight;
+  ctx.canvas.width  = config.winWidth;
+  ctx.canvas.height = config.winHeigth;
+  updateFrame();
+}
+
+window.addEventListener('resize', () => {
+  resize();
+})
