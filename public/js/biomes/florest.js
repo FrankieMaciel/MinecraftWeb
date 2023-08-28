@@ -2,7 +2,7 @@ import config from "../config.js";
 
 export function florest(x, y, block) {
 
-  const expectedHeight = montain(x, 100, 0.005, -100);
+  const expectedHeight = montain(x, 100, 0.001, -100);
   const expectedHeight2 = montain(x, 500, 0.001, -500);
 
   if ((y > expectedHeight) && (y > expectedHeight2)) {

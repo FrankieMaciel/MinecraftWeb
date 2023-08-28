@@ -36,20 +36,11 @@ export default class Chunk {
     }
   }
 
-  render(playerCam, chunkOffsetX, chunkOffsetY)
+  render(chunkOffsetX, chunkOffsetY)
   {
-    const offset = {
-      x: chunkOffsetX,
-      y: chunkOffsetY
-    }
-    const playerCamFixed = {
-      x: -playerCam.x,
-      y: -playerCam.y,
-    }
-
     for (const block of this.blocks) 
     {
-      block.render(playerCamFixed, offset);
+      block.render(chunkOffsetX, chunkOffsetY);
     }
   }
 }

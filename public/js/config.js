@@ -10,8 +10,8 @@ const config = {
   blockSize: 16,
   winWidth: window.innerWidth,
   winHeigth: window.innerHeight,
-  movementAmount: 2,
-  ctx: ctx
+  movementAmount: 1,
+  ctx: ctx,
 }
 
 export default config;

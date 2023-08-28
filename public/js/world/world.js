@@ -32,17 +32,15 @@ export default class World {
 
     let Xinit = Math.floor(playerCam.x / ChunkSizeX) * ChunkSizeX;
     let Yinit = Math.floor(playerCam.y / ChunkSizeY) * ChunkSizeY;
-
-    let Xinit2 = playerCam.x / ChunkSizeX * ChunkSizeX;
-    let Yinit2 = playerCam.y / ChunkSizeY * ChunkSizeY;
-
-    let MaxXnum = (config.winWidth / ChunkSizeX);
-    let MaxYnum = (config.winHeigth / ChunkSizeY);
-
-    for (let Xchunk = Xinit; Xchunk < Xinit + MaxXnum + (ChunkSizeX * 2); Xchunk += ChunkSizeX) 
+    
+    let MaxXnum = Math.floor((config.winWidth / ChunkSizeX));
+    let MaxYnum = Math.floor((config.winHeigth / ChunkSizeY));
+    
+    for (let Xchunk = Xinit; Xchunk < Xinit + (MaxXnum + ChunkSizeX); Xchunk += ChunkSizeX) 
     {
-      for (let Ychunk = Yinit; Ychunk < Yinit + MaxYnum + (ChunkSizeY * 2); Ychunk += ChunkSizeY) 
+      for (let Ychunk = Yinit; Ychunk < Yinit + (MaxYnum + ChunkSizeY); Ychunk += ChunkSizeY) 
       {
+        if (Ychunk > config.WorldMaxHeight) continue;
         var toRenderChunk;
         const retrievedChunk = this.chunks.get(`${Xchunk} ${Ychunk}`);
         if (retrievedChunk) 
@@ -53,11 +51,11 @@ export default class World {
           let newChunk = new Chunk(Xchunk, Ychunk, this);
           toRenderChunk = newChunk;
         }
-        
-        let xOffset = ((Xchunk - Xinit2) * ChunkSizeX);
-        let yOffset = ((Ychunk - Yinit2) * ChunkSizeY);
 
-        toRenderChunk.render(playerCam, xOffset, yOffset);
+        let XrenderPos = (Xchunk - playerCam.x) * config.blockSize;
+        let YrenderPos = (Ychunk - playerCam.y) * config.blockSize;
+
+        toRenderChunk.render(XrenderPos, YrenderPos);
       }
     }
   }

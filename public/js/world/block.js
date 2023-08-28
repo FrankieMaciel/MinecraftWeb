@@ -10,15 +10,11 @@ export default class Block {
     this.size = config.blockSize;
   }
 
-  render( ...offsets)
+  render(chunkOffsetX, chunkOffsetY)
   {
-    const xOffset = offsets.map((item) => item.x).reduce((pv, cv) => pv+cv);
-    const yOffset = offsets.map((item) => item.y).reduce((pv, cv) => pv+cv);
-    if (this.blockId === 'game:air') {
-      ctx.clearRect(this.x + xOffset, this.y + yOffset, this.size, this.size);
-    } else {
-      ctx.fillStyle = this.color;
-      ctx.fillRect(this.x + xOffset, this.y + yOffset, this.size, this.size);
-    }
+    if (this.blockId === 'game:air') return;
+
+    ctx.fillStyle = this.color;
+    ctx.fillRect(this.x + chunkOffsetX, this.y + chunkOffsetY, this.size, this.size);
   }
 }
