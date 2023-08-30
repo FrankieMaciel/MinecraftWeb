@@ -136,16 +136,17 @@ export default class Player {
 
     ctx.fillStyle = "#000000";
 
-    let camMoveX = (this.x * config.ChunkSizeX - this.camera.x) / 100;
-    let camMoveY = (this.y * config.ChunkSizeX - this.camera.y) / 100;
-    
+    let camMoveX = (this.x - this.camera.x).toFixed(0) / 12;
+    let camMoveY = (this.y - this.camera.y).toFixed(0) / 12;
+
     this.camera.x += camMoveX;
     this.camera.y += camMoveY;
 
-    let posX = (this.x * config.ChunkSizeX) - (this.camera.x - (config.winWidth / 2));
-    let posY = (this.y * config.ChunkSizeY) - (this.camera.y - (config.winHeigth / 2));
-    
-    // Removendo as linhas posX -= camMoveX; e posY -= camMoveY;
+    let screenCenterX = (config.winWidth / config.blockSize) / 2;
+    let screenCenterY = (config.winHeigth / config.blockSize) / 2;
+
+    let posX = (this.x - (this.camera.x - screenCenterX)) * config.blockSize;
+    let posY = (this.y - (this.camera.y - screenCenterY)) * config.blockSize;
 
     ctx.fillRect(posX - camMoveX, posY - camMoveX, this.SizeX, this.SizeY);
   }
