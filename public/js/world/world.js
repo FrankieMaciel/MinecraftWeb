@@ -1,9 +1,8 @@
 import Chunk from './chunk.js';
 import config from '../config.js'
 export default class World {
-  constructor(name, player) {
+  constructor(name) {
     this.name = name;
-    this.player = player;
     this.SufarceLevel = config.WorldMaxHeight / 2;
     this.chunks = new Map();
 
@@ -12,12 +11,11 @@ export default class World {
 
   create() 
   {
-    let camera = this.player.camera;
     let RenderDistanceX = config.RenderDistanceX;
     let RenderDistanceY = config.RenderDistanceY;
 
-    for (let x = camera.x; x < camera.x + RenderDistanceX; x++) {
-      for (let y = camera.y; y < camera.y + RenderDistanceY; y++) 
+    for (let x = 0; x < RenderDistanceX; x++) {
+      for (let y = 0; y < RenderDistanceY; y++) 
       {
         let BlockX = x * config.ChunkSizeX;
         let BlockY = y * config.ChunkSizeY;
@@ -33,29 +31,20 @@ export default class World {
     let Xinit = Math.floor(playerCam.x / ChunkSizeX) * ChunkSizeX;
     let Yinit = Math.floor(playerCam.y / ChunkSizeY) * ChunkSizeY;
     
-    let MaxXnum = Math.floor((config.winWidth / ChunkSizeX));
-    let MaxYnum = Math.floor((config.winHeigth / ChunkSizeY));
+    let MaxXnum = Xinit + Math.floor((config.winWidth / ChunkSizeX)) + ChunkSizeX;
+    let MaxYnum = Yinit + Math.floor((config.winHeigth / ChunkSizeY)) + ChunkSizeY;
     
-    for (let Xchunk = Xinit; Xchunk < Xinit + (MaxXnum + ChunkSizeX); Xchunk += ChunkSizeX) 
+    for (let x = Xinit; x < MaxXnum; x += ChunkSizeX)
     {
-      for (let Ychunk = Yinit; Ychunk < Yinit + (MaxYnum + ChunkSizeY); Ychunk += ChunkSizeY) 
+      for (let y = Yinit; y < MaxYnum; y += ChunkSizeY) 
       {
-        if (Ychunk > config.WorldMaxHeight) continue;
-        var toRenderChunk;
-        const retrievedChunk = this.chunks.get(`${Xchunk} ${Ychunk}`);
-        if (retrievedChunk) 
-        { 
-          toRenderChunk = retrievedChunk;
-        } else 
-        {
-          let newChunk = new Chunk(Xchunk, Ychunk, this);
-          toRenderChunk = newChunk;
-        }
+        let chunk = this.chunks.get(`${x} ${y}`);
+        if (!chunk) chunk = new Chunk(x, y, this);
 
-        let XrenderPos = (Xchunk - playerCam.x) * config.blockSize;
-        let YrenderPos = (Ychunk - playerCam.y) * config.blockSize;
+        let XrenderPos = (x - playerCam.x) * config.blockSize;
+        let YrenderPos = (y - playerCam.y) * config.blockSize;
 
-        toRenderChunk.render(XrenderPos, YrenderPos);
+        chunk.render(XrenderPos, YrenderPos);
       }
     }
   }

@@ -7,7 +7,7 @@ const config = {
   RenderDistanceY: 3,
   ChunkSizeX: 16,
   ChunkSizeY: 16,
-  blockSize: 16,
+  blockSize: 24,
   winWidth: window.innerWidth,
   winHeigth: window.innerHeight,
   movementAmount: 1,

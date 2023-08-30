@@ -7,14 +7,14 @@ import { getBiome } from './biomes.js';
 export default class Chunk {
   constructor(x, y, world) 
   {
-    this.blocks = [];
+    this.blocks = new Map();
     this.x = x;
     this.y = y;
     this.ChunkSizeX = config.ChunkSizeX;
     this.ChunkSizeY = config.ChunkSizeY;
+    
     this.world = world;
     this.world.chunks.set(`${x} ${y}`, this);
-
     this.create();
   }
 
@@ -28,17 +28,18 @@ export default class Chunk {
         let blockX = (x + this.x) * cubeSize;
         let blocky = (y + this.y) * cubeSize;
 
-        let newBlock = new Block(x * cubeSize, y * cubeSize, "#000000", "game:air");
+        let newBlock = new Block(x * cubeSize, y * cubeSize, "#000000", "game:air", this);
 
         newBlock = getBiome(blockX, blocky, newBlock, this.world);
-        this.blocks.push(newBlock);
+        this.blocks.set(`${x} ${y}`, newBlock);
       }
     }
   }
-
+  
+  
   render(chunkOffsetX, chunkOffsetY)
   {
-    for (const block of this.blocks) 
+    for (const [_, block] of this.blocks) 
     {
       block.render(chunkOffsetX, chunkOffsetY);
     }

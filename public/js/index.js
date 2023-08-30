@@ -9,20 +9,20 @@ import Player from './player/player.js';
 import World from './world/world.js';
 
 let newPlayer = new Player();
-let newWorld = new World('NewWorld', newPlayer);
+let newWorld = new World('NewWorld');
 
 newWorld.render(newPlayer.camera);
 
 const keysPressed = {};
 
 document.addEventListener('keydown', (event) => {
-  if (!event.repeat)
-    keysPressed[event.key] = event.key;
+  keysPressed[event.key.toLowerCase()] = event.key.toLowerCase();
+  // if (!event.repeat)
 });
 
 document.addEventListener('keyup', (event) => {
-  if (!event.repeat)
-    delete keysPressed[event.key];
+  delete keysPressed[event.key.toLowerCase()];
+  // if (!event.repeat)
 });
 
 function hexToRGB(hex) {
@@ -88,12 +88,20 @@ function renderSky(playerCamera) {
 }
 
 function updateFrame() {
+  // Render the sky
   renderSky(newPlayer.camera);
-  for (let key in keysPressed) {
-    newPlayer.onKeyDown(keysPressed[key]);
-  }
+  // Render the world
   newWorld.render(newPlayer.camera);
-  requestAnimationFrame(updateFrame);
+
+  // Calculate Player moviment
+  console.log(newPlayer);
+  newPlayer.onKeyDown(keysPressed);
+  //Render the player
+  newPlayer.render();
+
+  setTimeout(() => {
+    requestAnimationFrame(updateFrame);
+  }, 1/60);
 }
 
 updateFrame();

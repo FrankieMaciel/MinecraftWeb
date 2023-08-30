@@ -2,12 +2,14 @@ import config from '../config.js';
 let ctx = config.ctx;
 
 export default class Block {
-  constructor(x, y, color, blockId) {
+  constructor(x, y, color, blockId, chunk) {
     this.color = color;
     this.x = x;
     this.y = y;
     this.blockId = blockId;
     this.size = config.blockSize;
+
+    chunk.blocks.set(`${x} ${y}`, this);
   }
 
   render(chunkOffsetX, chunkOffsetY)
