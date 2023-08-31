@@ -7,15 +7,19 @@ export default class Player {
   keybinds = {
     'a': () => {
       this.x -= this.speed;
+      if (!this.canGoLeft) this.x += this.speed;
     },
     's': () => {
       this.y += this.speed;
+      if (!this.canGoDown) this.y -= this.speed;
     },
     'w': () => {
       this.y -= this.speed;
+      if (!this.canGoUp) this.y += this.speed;
     },
     'd': () => {
       this.x += this.speed;
+      if (!this.canGoRight) this.x -= this.speed;
     },
   }
 
@@ -30,15 +34,20 @@ export default class Player {
 
   constructor() {
     this.x = 0;
-    this.y = 0;
+    this.y = -32;
     
     this.ChunkX = 0;
-    this.chunkY = 0;
+    this.ChunkY = 0;
     this.Xblock = 0;
     this.Yblock = 0;
     
     this.SizeX = 24 * 2;
     this.SizeY = 24 * 3;
+
+    this.canGoUp = true;
+    this.canGoDown = true;
+    this.canGoLeft = true;
+    this.canGoRight = true;
 
     this.speed = config.movementAmount;
 
@@ -52,10 +61,10 @@ export default class Player {
   }
 
   calculatePlayerInfo() {
-    this.ChunkX = (Math.floor((this.x) / config.ChunkSizeX) * config.ChunkSizeX);
-    this.chunkY = (Math.floor(this.y / config.ChunkSizeY) * config.ChunkSizeY);
-    this.Xblock = Math.floor((this.x - this.chunkX) / config.blockSize);
-    this.Yblock = Math.floor((this.y - this.chunkY) / config.blockSize);
+    this.ChunkX = Math.floor(this.x / config.ChunkSizeX) * config.ChunkSizeX;
+    this.ChunkY = Math.floor(this.y / config.ChunkSizeY) * config.ChunkSizeY;
+    this.Xblock = Math.floor((this.x / config.blockSize) * config.blockSize) - this.ChunkX;
+    this.Yblock = Math.floor((this.y / config.blockSize) * config.blockSize) - this.ChunkY;
   }
 
   onKeyDown(keys) {
@@ -72,43 +81,55 @@ export default class Player {
     actions.forEach((act) => act());
   }
 
-  willToucth(world) {
+  checkColision(world) {
 
-    let chunk = world.chunks.get(`${this.ChunkX} ${this.chunkY}`);
-
+    console.log('chunkx: ' + this.ChunkX + ' | chunky: ' + this.ChunkY);
+    let chunk = world.chunks.get(`${this.ChunkX} ${this.ChunkY}`);
     if (!chunk) return;
-
-    let blocks = chunk.blocks;
-
-    let left = false, rigth = false, up = false, down = false;
-
+    
     for (let box of this.hitbox) {
-      let x = this.ChunkX + this.Xblock + box.x;
-      let y = this.chunkY + this.Yblock + box.y;
-      
-      if (box.x > 0) x += config.blockSize;
-      else x -= config.blockSize;
-      
-      if (box.y > 0) y += config.blockSize;
-      else y -= config.blockSize;
-      
-      let block = blocks.get(`${x} ${y}`);
 
-      if (!block) continue;
-      if (block.blockId !== 'game:air') continue;
+      let blockX = this.Xblock + box.x;
+      let blockY = this.Yblock + box.y;
 
-      if (box.x > 0) rigth = true;
-      else left = true;
+      let block = chunk.blocks.get(`${blockX} ${blockY}`);
+      if (!block) return;
+      // console.log(block);
+      let isAir = block.blockId === 'game:air';
 
-      if (box.y > 0) down = true;
-      else up = true;
+      this.MoveDirection(blockX, blockY, block.size, isAir);
     }
-    return {
-      left: left,
-      rigth: rigth,
-      up: up,
-      down: down
-    };
+  }
+
+  resetColision() {
+
+    console.log('down ' + this.canGoDown);
+    console.log('up ' + this.canGoUp);
+    console.log('left ' + this.canGoLeft);
+    console.log('rigth ' + this.canGoRight);
+
+    this.canGoUp = true;
+    this.canGoDown = true;
+    this.canGoLeft = true;
+    this.canGoRight = true;
+  }
+
+  MoveDirection(blockX, blockY, blockSize, isAir) {
+    const margem = 1;
+    if (
+        this.x + this.SizeX >= blockX - margem &&
+        this.x <= blockX + blockSize + margem &&
+        this.y + this.SizeY >= blockY - margem &&
+        this.y <= blockY + blockSize + margem
+    ) {
+        this.canGoUp = this.y + this.SizeY >= blockY && this.y <= blockY;
+        this.canGoDown = this.y <= blockY + blockSize && this.y + this.SizeY >= blockY + blockSize;
+        this.canGoLeft = this.x + this.SizeX >= blockX && this.x <= blockX;
+        this.canGoRight = this.x <= blockX + blockSize && this.x + this.SizeX >= blockX + blockSize;
+    }
+    if (!isAir) {
+      console.log('intersect!');
+    }
   }
 
   calculateHitbox() {
@@ -124,7 +145,7 @@ export default class Player {
 
         if (isXok && isYok) continue;
 
-        this.hitbox.push({x: x * config.blockSize, y: y * config.blockSize});
+        this.hitbox.push({x: x, y: y});
       }
     }
 
@@ -149,5 +170,7 @@ export default class Player {
     let posY = (this.y - (this.camera.y - screenCenterY)) * config.blockSize;
 
     ctx.fillRect(posX - camMoveX, posY - camMoveX, this.SizeX, this.SizeY);
+
+    this.resetColision();
   }
 }

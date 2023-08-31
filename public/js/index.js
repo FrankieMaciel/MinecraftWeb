@@ -92,10 +92,12 @@ function updateFrame() {
   renderSky(newPlayer.camera);
   // Render the world
   newWorld.render(newPlayer.camera);
-
+  
+  newPlayer.checkColision(newWorld);
+  
   // Calculate Player moviment
-  console.log(newPlayer);
   newPlayer.onKeyDown(keysPressed);
+
   //Render the player
   newPlayer.render();
 
