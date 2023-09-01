@@ -6,20 +6,19 @@ let ctx = config.ctx;
 export default class Player {
   keybinds = {
     'a': () => {
-      this.x -= this.speed;
-      if (!this.canGoLeft) this.x += this.speed;
+      this.nextX -= this.speed;
     },
     's': () => {
-      this.y += this.speed;
-      if (!this.canGoDown) this.y -= this.speed;
+      this.nextY += this.jumpEnergy;
     },
     'w': () => {
-      this.y -= this.speed;
-      if (!this.canGoUp) this.y += this.speed;
+      this.nextY -= this.jumpEnergy;
     },
     'd': () => {
-      this.x += this.speed;
-      if (!this.canGoRight) this.x -= this.speed;
+      this.nextX += this.speed;
+    },
+    'q': () => {
+      this.enableGravity = !this.enableGravity;
     },
   }
 
@@ -32,9 +31,12 @@ export default class Player {
     },
   }
 
-  constructor() {
+  constructor(world) {
     this.x = 0;
-    this.y = 80;
+    this.y = 0;
+
+    this.nextX = this.x;
+    this.nextY = this.y;
     
     this.ChunkX = 0;
     this.ChunkY = 0;
@@ -44,20 +46,21 @@ export default class Player {
     this.SizeX = 24 * 2;
     this.SizeY = 24 * 3;
 
-    this.canGoUp = true;
-    this.canGoDown = true;
-    this.canGoLeft = true;
-    this.canGoRight = true;
-
     this.speed = config.movementAmount;
+    this.jumpEnergy = 1;
+    this.VelocityY = 0;
+    this.enableGravity = true;
+
+    this.hasCollide = false;
 
     this.camera = new Camera();
+    this.world = world;
     this.hitbox = [];
 
     this.RenderDistanceY = config.RenderDistanceY;
     this.RenderDistanceX = config.RenderDistanceX;
 
-    this.calculateHitbox()
+    this.calculateHitbox();
   }
 
   calculatePlayerInfo() {
@@ -68,8 +71,11 @@ export default class Player {
   }
 
   renderInfo() {
+    let blockAt = 'None';
+    let block = this.world.getBlockAt(this.x, this.y);
+    if (block) blockAt = block.blockId;
 
-    let info = `x:${this.x} y:${this.y}`
+    let info = `x:${this.x} y:${this.y} | blockId: ${blockAt}`;
 
     ctx.font = "16px monospace";
     ctx.fillStyle = "white";
@@ -88,59 +94,40 @@ export default class Player {
     }
     pactions.forEach((act) => act());
     actions.forEach((act) => act());
+    this.checkColision();
   }
 
-  checkColision(world) {
-
-    // console.log('chunkx: ' + this.ChunkX + ' | chunky: ' + this.ChunkY);
-    let chunk = world.chunks.get(`${this.ChunkX} ${this.ChunkY}`);
-    // console.log(chunk);
-    if (!chunk) return;
-    
+  checkColision() {
+    this.hasCollide = false;
     for (let box of this.hitbox) {
+      let hitX = this.nextX + box.x;
+      let hitY = this.nextY + box.y;
 
-      let blockX = (this.Xblock) * config.ChunkSizeX;
-      let blockY = (this.Yblock) * config.ChunkSizeY;
-
-      // console.log('blockY: ' + blockY + ' | blockY: ' + blockY);
-
-      let block = chunk.blocks.get(`${blockX} ${blockY}`);
-      // console.log(block);
-      if (!block) return;
-      // console.log(block);
-      let isAir = block.blockId === 'game:air';
-
-      this.MoveDirection(blockX, blockY, block.size, isAir);
+      let block = this.world.getBlockAt(hitX, hitY);
+      if (!block) continue;
+      if (block.blockId !== 'game:air') {
+        this.hasCollide = true;
+        break;
+      } 
+    }
+    if (!this.hasCollide)  {
+      this.x = this.nextX;
+      this.y = this.nextY;
+    } else {
+      this.nextX = this.x;
+      this.nextY = this.y;
     }
   }
 
-  resetColision() {
-
-    // console.log('down ' + this.canGoDown);
-    // console.log('up ' + this.canGoUp);
-    // console.log('left ' + this.canGoLeft);
-    // console.log('rigth ' + this.canGoRight);
-
-    this.canGoUp = true;
-    this.canGoDown = true;
-    this.canGoLeft = true;
-    this.canGoRight = true;
-  }
-
-  MoveDirection(blockX, blockY, blockSize, isAir) {
-    const margem = 0;
-    if (
-        this.x + this.SizeX >= blockX - margem &&
-        this.x <= blockX + blockSize + margem &&
-        this.y + this.SizeY >= blockY - margem &&
-        this.y <= blockY + blockSize + margem
-    ) {
-        if (isAir) return;
-        this.canGoUp = this.y + this.SizeY >= blockY && this.y <= blockY;
-        this.canGoDown = this.y <= blockY + blockSize && this.y + this.SizeY >= blockY + blockSize;
-        this.canGoLeft = this.x + this.SizeX >= blockX && this.x <= blockX;
-        this.canGoRight = this.x <= blockX + blockSize && this.x + this.SizeX >= blockX + blockSize;
-    }  
+  gravity() {
+    // if (!this.hasCollide) this.VelocityY += 1;
+    // if (this.hasCollide) this.VelocityY = 0;
+    // if (this.VelocityY > 2) this.VelocityY = 2;
+    if (this.enableGravity) {
+      this.nextY += 1;
+      // this.jumpEnergy = this.jumpEnergy / 2;
+      this.checkColision();
+    }
   }
 
   calculateHitbox() {
@@ -159,7 +146,6 @@ export default class Player {
         this.hitbox.push({x: x, y: y});
       }
     }
-
   }
 
   render() {
@@ -182,7 +168,6 @@ export default class Player {
 
     ctx.fillRect(posX - camMoveX, posY - camMoveX, this.SizeX, this.SizeY);
 
-    this.resetColision();
     this.renderInfo();
   }
 }

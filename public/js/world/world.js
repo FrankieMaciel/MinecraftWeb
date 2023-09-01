@@ -27,8 +27,36 @@ export default class World {
     }
   }
 
-  addDirt() {
-    
+  getBlockAt(x ,y) {
+    let ChunkX = Math.floor(x / config.ChunkSizeX) * config.ChunkSizeX;
+    let ChunkY = Math.floor(y / config.ChunkSizeY) * config.ChunkSizeY;
+
+    let Xblock = Math.floor((x / config.blockSize) * config.blockSize) - ChunkX;
+    let Yblock = Math.floor((y / config.blockSize) * config.blockSize) - ChunkY;
+
+    let chunk = this.chunks.get(`${ChunkX} ${ChunkY}`);
+    if (!chunk) return null;
+    let block = chunk.blocks.get(`${Xblock} ${Yblock}`);
+    if (!block) return null;
+    return block;
+  }
+  
+  setBlockAt(x, y, id) {
+    let ChunkX = Math.floor(x / config.ChunkSizeX) * config.ChunkSizeX;
+    let ChunkY = Math.floor(y / config.ChunkSizeY) * config.ChunkSizeY;
+
+    let Xblock = Math.floor((x / config.blockSize) * config.blockSize) - ChunkX;
+    let Yblock = Math.floor((y / config.blockSize) * config.blockSize) - ChunkY;
+
+    let chunk = this.chunks.get(`${ChunkX} ${ChunkY}`);
+    if (!chunk) return null;
+    let block = chunk.blocks.get(`${Xblock} ${Yblock}`);
+    if (!block) return null;
+
+    block.change(id);
+    chunk.blocks.set(`${Xblock} ${Yblock}`, block);
+    this.chunks.set(`${ChunkX} ${ChunkY}`, chunk);
+    return true;
   }
 
   render(playerCam) {

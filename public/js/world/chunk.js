@@ -1,7 +1,5 @@
 import Block from './block.js';
 import config from '../config.js';
-import getSurfaceNoise from '../noise/noise.js';
-import { getRandomColor, getRandomColorDirt, getRandomColorRock } from '../colors/colors.js'
 import { getBiome } from './biomes.js';
 
 export default class Chunk {
@@ -28,7 +26,7 @@ export default class Chunk {
         let blockX = x + this.x;
         let blocky = y + this.y;
 
-        let newBlock = new Block(x, y, "#000000", "game:air", this);
+        let newBlock = new Block(x, y, "game:air", this);
 
         newBlock = getBiome(blockX, blocky, newBlock, this.world);
         this.blocks.set(`${x} ${y}`, newBlock);

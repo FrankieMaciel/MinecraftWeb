@@ -12,8 +12,7 @@ export function florest(x, y, block) {
 
   if (y < (expectedHeight + expectedHeight4) + expectedHeight2) return block;
 
-  block.color = "#999999"
-  block.blockId = "game:rock"
+  block.change("game:rock");
   return block;
 }
 

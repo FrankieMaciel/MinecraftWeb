@@ -1,15 +1,20 @@
 import config from '../config.js';
+import { getColor } from '../colors/colors.js';
 let ctx = config.ctx;
 
 export default class Block {
-  constructor(x, y, color, blockId, chunk) {
-    this.color = color;
+  constructor(x, y, blockId, chunk) {
     this.x = x;
     this.y = y;
     this.blockId = blockId;
+    this.color = getColor(this.blockId);
     this.size = config.blockSize;
-
     chunk.blocks.set(`${x} ${y}`, this);
+  }
+
+  change(newId) {
+    this.blockId = newId;
+    this.color = getColor(newId);
   }
 
   render(chunkOffsetX, chunkOffsetY)

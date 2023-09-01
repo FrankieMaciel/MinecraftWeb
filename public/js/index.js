@@ -8,8 +8,8 @@ ctx.canvas.height = config.winHeigth;
 import Player from './player/player.js';
 import World from './world/world.js';
 
-let newPlayer = new Player();
 let newWorld = new World('NewWorld');
+let newPlayer = new Player(newWorld);
 
 newWorld.render(newPlayer.camera);
 
@@ -64,12 +64,12 @@ function renderSky(playerCamera) {
   let color3 = '#e4eef2';
   let color4 = '#a9ddf5';
 
-  let camPosY = (playerCamera.y + 30);
+  let camPosY = (playerCamera.y - config.WorldMaxHeight);
   
-  if (camPosY <= 0) camPosY = 1;
-  if (camPosY > config.WorldMaxHeight / 2) camPosY = (config.WorldMaxHeight / 2);
+  if (camPosY < 0) camPosY = 1;
+  if (camPosY > config.WorldMaxHeight) camPosY = config.WorldMaxHeight;
 
-  let percentage = calculatePercentage(camPosY, (config.WorldMaxHeight / 2));
+  let percentage = calculatePercentage(camPosY, config.WorldMaxHeight);
 
   const weight1 = percentage; // Peso para a cor 1
   const weight2 = 100 - percentage; // Peso para a cor 2
@@ -93,10 +93,9 @@ function updateFrame() {
   // Render the world
   newWorld.render(newPlayer.camera);
   
-  newPlayer.checkColision(newWorld);
-  
   // Calculate Player moviment
   newPlayer.onKeyDown(keysPressed);
+  newPlayer.gravity();
 
   //Render the player
   newPlayer.render();
