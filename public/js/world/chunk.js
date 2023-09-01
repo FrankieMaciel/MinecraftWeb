@@ -15,7 +15,8 @@ export default class Chunk {
     
     this.world = world;
     this.world.chunks.set(`${x} ${y}`, this);
-    this.create();
+
+    if (y < config.WorldMaxHeight) this.create();
   }
 
   create() 
@@ -24,18 +25,16 @@ export default class Chunk {
     {
       for (let y = 0; y < this.ChunkSizeY; y++) 
       {
-        let cubeSize = config.blockSize;
-        let blockX = (x + this.x) * cubeSize;
-        let blocky = (y + this.y) * cubeSize;
+        let blockX = x + this.x;
+        let blocky = y + this.y;
 
-        let newBlock = new Block(x * cubeSize, y * cubeSize, "#000000", "game:air", this);
+        let newBlock = new Block(x, y, "#000000", "game:air", this);
 
         newBlock = getBiome(blockX, blocky, newBlock, this.world);
         this.blocks.set(`${x} ${y}`, newBlock);
       }
     }
   }
-  
   
   render(chunkOffsetX, chunkOffsetY)
   {

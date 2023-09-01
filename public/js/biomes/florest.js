@@ -1,28 +1,19 @@
 import config from "../config.js";
+import { caveNoise } from "./caves.js";
 
 export function florest(x, y, block) {
 
-  const expectedHeight = montain(x, 100, 0.001, -100);
-  const expectedHeight2 = montain(x, 500, 0.001, -500);
+  let noise = caveNoise(x, x , 400, 400);
+  let noise2 = caveNoise(y, y , 400, 400);
+  
+  let expectedHeight = (noise + montain(x, 10, 0.001, -10 -noise)) + (config.WorldMaxHeight / 2);
+  let expectedHeight2 = montain(x, 5, 0.001, -5 - noise2);
+  let expectedHeight4 = montain(x, 20, 0.01, -20);
 
-  if ((y > expectedHeight) && (y > expectedHeight2)) {
-    block.color = "#999999"
-    block.blockId = "game:rock"
-    return block;
-  };
+  if (y < (expectedHeight + expectedHeight4) + expectedHeight2) return block;
 
-  if (((y + (3 * config.blockSize)) > expectedHeight) && ((y + (1 * config.blockSize)) > expectedHeight2)) {
-    block.color = "#5c5049";
-    block.blockId = "game:dirt";
-    return block;
-  }
-
-  if (((y + (4 * config.blockSize)) > expectedHeight) && ((y + (4 * config.blockSize)) > expectedHeight2)) {
-    block.color = "#87cc8e";
-    block.blockId = "game:dirt";
-  }
-
-
+  block.color = "#999999"
+  block.blockId = "game:rock"
   return block;
 }
 

@@ -2,7 +2,7 @@ const canvas = document.getElementById("world");
 const ctx = canvas.getContext("2d");
 
 const config = {
-  WorldMaxHeight: 128,
+  WorldMaxHeight: 256,
   RenderDistanceX: 5,
   RenderDistanceY: 3,
   ChunkSizeX: 16,

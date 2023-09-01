@@ -6,6 +6,9 @@ export default class World {
     this.SufarceLevel = config.WorldMaxHeight / 2;
     this.chunks = new Map();
 
+    this.screenCenterX = (config.winWidth / config.blockSize) / 2;
+    this.screenCenterY = (config.winHeigth / config.blockSize) / 2;
+
     this.create();
   }
 
@@ -24,12 +27,16 @@ export default class World {
     }
   }
 
+  addDirt() {
+    
+  }
+
   render(playerCam) {
     let ChunkSizeX = config.ChunkSizeX;
     let ChunkSizeY = config.ChunkSizeY;
 
-    let Xinit = Math.floor(playerCam.x / ChunkSizeX) * ChunkSizeX;
-    let Yinit = Math.floor(playerCam.y / ChunkSizeY) * ChunkSizeY;
+    let Xinit = Math.floor((playerCam.x - this.screenCenterX) / ChunkSizeX) * ChunkSizeX;
+    let Yinit = Math.floor((playerCam.y - this.screenCenterY) / ChunkSizeY) * ChunkSizeY;
     
     let MaxXnum = Xinit + Math.floor((config.winWidth / ChunkSizeX)) + ChunkSizeX;
     let MaxYnum = Yinit + Math.floor((config.winHeigth / ChunkSizeY)) + ChunkSizeY;
@@ -41,8 +48,8 @@ export default class World {
         let chunk = this.chunks.get(`${x} ${y}`);
         if (!chunk) chunk = new Chunk(x, y, this);
 
-        let XrenderPos = (x - playerCam.x) * config.blockSize;
-        let YrenderPos = (y - playerCam.y) * config.blockSize;
+        let XrenderPos = (x - (playerCam.x - this.screenCenterX)) * config.blockSize;
+        let YrenderPos = (y - (playerCam.y - this.screenCenterY)) * config.blockSize;
 
         chunk.render(XrenderPos, YrenderPos);
       }

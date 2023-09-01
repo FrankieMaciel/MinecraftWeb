@@ -16,7 +16,10 @@ export default class Block {
   {
     if (this.blockId === 'game:air') return;
 
+    let posX = (this.x * this.size) + chunkOffsetX;
+    let posY = (this.y * this.size) + chunkOffsetY;
+
     ctx.fillStyle = this.color;
-    ctx.fillRect(this.x + chunkOffsetX, this.y + chunkOffsetY, this.size, this.size);
+    ctx.fillRect(posX, posY, this.size, this.size);
   }
 }

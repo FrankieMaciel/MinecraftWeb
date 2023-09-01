@@ -34,7 +34,7 @@ export default class Player {
 
   constructor() {
     this.x = 0;
-    this.y = -32;
+    this.y = 80;
     
     this.ChunkX = 0;
     this.ChunkY = 0;
@@ -67,6 +67,15 @@ export default class Player {
     this.Yblock = Math.floor((this.y / config.blockSize) * config.blockSize) - this.ChunkY;
   }
 
+  renderInfo() {
+
+    let info = `x:${this.x} y:${this.y}`
+
+    ctx.font = "16px monospace";
+    ctx.fillStyle = "white";
+    ctx.fillText(info, config.blockSize / 2, config.blockSize);
+  }
+
   onKeyDown(keys) {
     this.speed = config.movementAmount;
     const actions = [];
@@ -83,16 +92,20 @@ export default class Player {
 
   checkColision(world) {
 
-    console.log('chunkx: ' + this.ChunkX + ' | chunky: ' + this.ChunkY);
+    // console.log('chunkx: ' + this.ChunkX + ' | chunky: ' + this.ChunkY);
     let chunk = world.chunks.get(`${this.ChunkX} ${this.ChunkY}`);
+    // console.log(chunk);
     if (!chunk) return;
     
     for (let box of this.hitbox) {
 
-      let blockX = this.Xblock + box.x;
-      let blockY = this.Yblock + box.y;
+      let blockX = (this.Xblock) * config.ChunkSizeX;
+      let blockY = (this.Yblock) * config.ChunkSizeY;
+
+      // console.log('blockY: ' + blockY + ' | blockY: ' + blockY);
 
       let block = chunk.blocks.get(`${blockX} ${blockY}`);
+      // console.log(block);
       if (!block) return;
       // console.log(block);
       let isAir = block.blockId === 'game:air';
@@ -103,10 +116,10 @@ export default class Player {
 
   resetColision() {
 
-    console.log('down ' + this.canGoDown);
-    console.log('up ' + this.canGoUp);
-    console.log('left ' + this.canGoLeft);
-    console.log('rigth ' + this.canGoRight);
+    // console.log('down ' + this.canGoDown);
+    // console.log('up ' + this.canGoUp);
+    // console.log('left ' + this.canGoLeft);
+    // console.log('rigth ' + this.canGoRight);
 
     this.canGoUp = true;
     this.canGoDown = true;
@@ -115,21 +128,19 @@ export default class Player {
   }
 
   MoveDirection(blockX, blockY, blockSize, isAir) {
-    const margem = 1;
+    const margem = 0;
     if (
         this.x + this.SizeX >= blockX - margem &&
         this.x <= blockX + blockSize + margem &&
         this.y + this.SizeY >= blockY - margem &&
         this.y <= blockY + blockSize + margem
     ) {
+        if (isAir) return;
         this.canGoUp = this.y + this.SizeY >= blockY && this.y <= blockY;
         this.canGoDown = this.y <= blockY + blockSize && this.y + this.SizeY >= blockY + blockSize;
         this.canGoLeft = this.x + this.SizeX >= blockX && this.x <= blockX;
         this.canGoRight = this.x <= blockX + blockSize && this.x + this.SizeX >= blockX + blockSize;
-    }
-    if (!isAir) {
-      console.log('intersect!');
-    }
+    }  
   }
 
   calculateHitbox() {
@@ -172,5 +183,6 @@ export default class Player {
     ctx.fillRect(posX - camMoveX, posY - camMoveX, this.SizeX, this.SizeY);
 
     this.resetColision();
+    this.renderInfo();
   }
 }
