@@ -46,6 +46,11 @@ export default class Player {
     this.SizeX = 24 * 2;
     this.SizeY = 24 * 3;
 
+    this.MouseX = 0;
+    this.MouseY = 0;
+
+    this.HoldingBlockId = "game:rock";
+
     this.speed = config.movementAmount;
     this.jumpEnergy = 1;
     this.VelocityY = 0;
@@ -63,19 +68,22 @@ export default class Player {
     this.calculateHitbox();
   }
 
-  calculatePlayerInfo() {
+  calculatePlayerInfo(mouseX, mouseY) {
     this.ChunkX = Math.floor(this.x / config.ChunkSizeX) * config.ChunkSizeX;
     this.ChunkY = Math.floor(this.y / config.ChunkSizeY) * config.ChunkSizeY;
     this.Xblock = Math.floor((this.x / config.blockSize) * config.blockSize) - this.ChunkX;
     this.Yblock = Math.floor((this.y / config.blockSize) * config.blockSize) - this.ChunkY;
+
+    this.MouseX = Math.floor((this.camera.x - this.world.screenCenterX) + mouseX / config.blockSize);
+    this.MouseY = Math.floor((this.camera.y - this.world.screenCenterY) + mouseY / config.blockSize);
   }
 
-  renderInfo() {
+  renderInfo(fps) {
     let blockAt = 'None';
     let block = this.world.getBlockAt(this.x, this.y);
     if (block) blockAt = block.blockId;
 
-    let info = `x:${this.x} y:${this.y} | blockId: ${blockAt}`;
+    let info = `Fps: ${fps} | x:${this.x} y:${this.y} | blockId: ${blockAt} | MouseX ${this.MouseX} MouseY ${this.MouseY}`;
 
     ctx.font = "16px monospace";
     ctx.fillStyle = "white";
@@ -130,6 +138,16 @@ export default class Player {
     }
   }
 
+  breakBlock() {
+    this.world.setBlockAt(this.MouseX, this.MouseY, "game:air");
+  }
+
+  placeBlock() {
+    let block = this.world.getBlockAt(this.MouseX, this.MouseY);
+    if (block.blockId !== "game:air") return;
+    this.world.setBlockAt(this.MouseX, this.MouseY, this.HoldingBlockId);
+  }
+
   calculateHitbox() {
 
     let numBlocksX = Math.floor(this.SizeX / config.blockSize);
@@ -148,9 +166,7 @@ export default class Player {
     }
   }
 
-  render() {
-
-    this.calculatePlayerInfo();
+  render(fps) {
 
     ctx.fillStyle = "#000000";
 
@@ -160,14 +176,11 @@ export default class Player {
     this.camera.x += camMoveX;
     this.camera.y += camMoveY;
 
-    let screenCenterX = (config.winWidth / config.blockSize) / 2;
-    let screenCenterY = (config.winHeigth / config.blockSize) / 2;
-
-    let posX = (this.x - (this.camera.x - screenCenterX)) * config.blockSize;
-    let posY = (this.y - (this.camera.y - screenCenterY)) * config.blockSize;
+    let posX = (this.x - (this.camera.x - this.world.screenCenterX)) * config.blockSize;
+    let posY = (this.y - (this.camera.y - this.world.screenCenterY)) * config.blockSize;
 
     ctx.fillRect(posX - camMoveX, posY - camMoveX, this.SizeX, this.SizeY);
 
-    this.renderInfo();
+    this.renderInfo(fps);
   }
 }

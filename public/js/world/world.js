@@ -6,10 +6,16 @@ export default class World {
     this.SufarceLevel = config.WorldMaxHeight / 2;
     this.chunks = new Map();
 
-    this.screenCenterX = (config.winWidth / config.blockSize) / 2;
-    this.screenCenterY = (config.winHeigth / config.blockSize) / 2;
+    this.screenCenterX;
+    this.screenCenterY;
 
     this.create();
+    this.getCenterScreen();
+  }
+
+  getCenterScreen() {
+    this.screenCenterX = (config.winWidth / config.blockSize).toFixed(0) / 2;
+    this.screenCenterY = (config.winHeigth / config.blockSize).toFixed(0) / 2;
   }
 
   create() 

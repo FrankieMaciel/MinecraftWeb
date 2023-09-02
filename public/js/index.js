@@ -87,6 +87,21 @@ function renderSky(playerCamera) {
   ctx.fillRect(0, 0, config.winWidth, config.winHeigth);
 }
 
+let lastFrameTime = 0;
+let fps = 0;
+
+let mouseX = 0;
+let mouseY = 0;
+
+function calculateFPS() {
+  const currentTime = performance.now();
+  const timeElapsed = currentTime - lastFrameTime;
+
+  lastFrameTime = currentTime;
+  fps = 1000 / timeElapsed;
+  return Math.round(fps);
+}
+
 function updateFrame() {
   // Render the sky
   renderSky(newPlayer.camera);
@@ -97,8 +112,11 @@ function updateFrame() {
   newPlayer.onKeyDown(keysPressed);
   newPlayer.gravity();
 
+  fps = calculateFPS();
+  newPlayer.calculatePlayerInfo(mouseX, mouseY);
+
   //Render the player
-  newPlayer.render();
+  newPlayer.render(fps);
 
   setTimeout(() => {
     requestAnimationFrame(updateFrame);
@@ -110,11 +128,30 @@ updateFrame();
 function resize() {
   config.winWidth = window.innerWidth;
   config.winHeigth = window.innerHeight;
-  ctx.canvas.width  = config.winWidth;
-  ctx.canvas.height = config.winHeigth;
-  updateFrame();
+  ctx.canvas.width  = window.innerWidth;
+  ctx.canvas.height = window.innerHeight;
+  newWorld.getCenterScreen();
 }
 
 window.addEventListener('resize', () => {
   resize();
 })
+
+function getMousePos(canvas, evt) {
+  let rect = canvas.getBoundingClientRect();
+  mouseX = evt.clientX - rect.left,
+  mouseY = evt.clientY - rect.top
+}
+
+window.addEventListener('mousemove' , (event) => {
+  getMousePos(config.canvas, event);
+})
+
+window.addEventListener('click' , (event) => {
+  newPlayer.breakBlock();
+});
+
+window.oncontextmenu = function () {
+    newPlayer.placeBlock();
+    return false;     // cancel default menu
+}

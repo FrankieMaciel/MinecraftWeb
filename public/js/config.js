@@ -12,6 +12,7 @@ const config = {
   winHeigth: window.innerHeight,
   movementAmount: 1,
   ctx: ctx,
+  canvas: canvas
 }
 
 export default config;
