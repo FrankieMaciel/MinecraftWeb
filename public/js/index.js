@@ -93,6 +93,8 @@ let fps = 0;
 let mouseX = 0;
 let mouseY = 0;
 
+let debugBlockColor;
+
 function calculateFPS() {
   const currentTime = performance.now();
   const timeElapsed = currentTime - lastFrameTime;
@@ -152,6 +154,13 @@ window.addEventListener('click' , (event) => {
 });
 
 window.oncontextmenu = function () {
-    newPlayer.placeBlock();
+    newPlayer.placeBlock(debugBlockColor);
     return false;     // cancel default menu
 }
+
+// Seletor do elemento input de cor
+const colorPicker = document.getElementById("colorPicker");
+
+colorPicker.addEventListener("input", function() {
+  debugBlockColor = colorPicker.value;
+});

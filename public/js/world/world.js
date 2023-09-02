@@ -47,7 +47,7 @@ export default class World {
     return block;
   }
   
-  setBlockAt(x, y, id) {
+  setBlockAt(x, y, id, debugColor) {
     let ChunkX = Math.floor(x / config.ChunkSizeX) * config.ChunkSizeX;
     let ChunkY = Math.floor(y / config.ChunkSizeY) * config.ChunkSizeY;
 
@@ -59,7 +59,7 @@ export default class World {
     let block = chunk.blocks.get(`${Xblock} ${Yblock}`);
     if (!block) return null;
 
-    block.change(id);
+    block.change(id, debugColor);
     chunk.blocks.set(`${Xblock} ${Yblock}`, block);
     this.chunks.set(`${ChunkX} ${ChunkY}`, chunk);
     return true;

@@ -19,26 +19,9 @@ body {
     overflow: hidden;
 }
 
-.block {
+.color-picker {
     position: absolute;
-    /* transition: bottom 0.1s ease, left 0.1s ease; */
+    bottom:2%;
+    left: 2%;
+    z-index: 1;
 }
-
-#space {
-    --camera-x: 0px;
-    --camera-y: -600px;
-}
-
-#zone1 {
-    position: relative;
-    z-index: -1;
-    isolation: isolate;
-    box-shadow: inset 5px block;
-    filter: brightness(85%);
-}
-
-#zone2 {
-    position: relative;
-    filter: drop-shadow(0px 0px 5px black);
-}
-

@@ -142,10 +142,11 @@ export default class Player {
     this.world.setBlockAt(this.MouseX, this.MouseY, "game:air");
   }
 
-  placeBlock() {
+  placeBlock(debugBlockColor) {
     let block = this.world.getBlockAt(this.MouseX, this.MouseY);
     if (block.blockId !== "game:air") return;
-    this.world.setBlockAt(this.MouseX, this.MouseY, this.HoldingBlockId);
+    if (debugBlockColor) this.HoldingBlockId = null;
+    this.world.setBlockAt(this.MouseX, this.MouseY, this.HoldingBlockId, debugBlockColor);
   }
 
   calculateHitbox() {

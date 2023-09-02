@@ -12,9 +12,12 @@ export default class Block {
     chunk.blocks.set(`${x} ${y}`, this);
   }
 
-  change(newId) {
+  change(newId, debugColor) {
     this.blockId = newId;
     this.color = getColor(newId);
+    if (!newId)  {
+      this.color = debugColor;
+    }
   }
 
   render(chunkOffsetX, chunkOffsetY)
