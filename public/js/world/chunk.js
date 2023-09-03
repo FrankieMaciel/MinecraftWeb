@@ -10,11 +10,20 @@ export default class Chunk {
     this.y = y;
     this.ChunkSizeX = config.ChunkSizeX;
     this.ChunkSizeY = config.ChunkSizeY;
-    
     this.world = world;
-    this.world.chunks.set(`${x} ${y}`, this);
-
+    world.chunks.set(`${x} ${y}`, this);
     if (y < config.WorldMaxHeight) this.create();
+  }
+
+  toJSON() {
+    return {
+      x: this.x,
+      y: this.y,
+    };
+  }
+
+  static fromJSON(json) {
+    return new Block(json.x, json.y);
   }
 
   create() 
@@ -26,10 +35,9 @@ export default class Chunk {
         let blockX = x + this.x;
         let blocky = y + this.y;
 
-        let newBlock = new Block(x, y, "game:air", this);
-
+        let newBlock = new Block(x, y, "game:air", null, this);
+        // console.log(this.x + ' ' + this.y);
         newBlock = getBiome(blockX, blocky, newBlock, this.world);
-        this.blocks.set(`${x} ${y}`, newBlock);
       }
     }
   }

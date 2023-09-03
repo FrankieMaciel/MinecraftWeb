@@ -9,20 +9,17 @@ import Player from './player/player.js';
 import World from './world/world.js';
 
 let newWorld = new World('NewWorld');
-let newPlayer = new Player(newWorld);
 
-newWorld.render(newPlayer.camera);
+let newPlayer = new Player(newWorld);
 
 const keysPressed = {};
 
 document.addEventListener('keydown', (event) => {
   keysPressed[event.key.toLowerCase()] = event.key.toLowerCase();
-  // if (!event.repeat)
 });
 
 document.addEventListener('keyup', (event) => {
   delete keysPressed[event.key.toLowerCase()];
-  // if (!event.repeat)
 });
 
 function hexToRGB(hex) {
@@ -139,22 +136,53 @@ window.addEventListener('resize', () => {
   resize();
 })
 
+setInterval(() => {
+
+  // Serializar o mundo para JSON
+  const mundoJSON = JSON.stringify(newWorld);
+  // Salvar no Local Storage
+  localStorage.setItem('mundo', mundoJSON);
+  console.log('Mundo Salvo');
+  
+}, 60 * 1000);
+
 function getMousePos(canvas, evt) {
   let rect = canvas.getBoundingClientRect();
   mouseX = evt.clientX - rect.left,
   mouseY = evt.clientY - rect.top
 }
 
-window.addEventListener('mousemove' , (event) => {
-  getMousePos(config.canvas, event);
-})
+let isLeftMouseDown = false;
+let isRightMouseDown = false;
 
-window.addEventListener('click' , (event) => {
-  newPlayer.breakBlock();
+window.addEventListener('mousedown', (event) => {
+  if (event.button === 0) {
+    isLeftMouseDown = true;
+    newPlayer.breakBlock();
+  } else if (event.button === 2) {
+    isRightMouseDown = true;
+    newPlayer.placeBlock(debugBlockColor);
+  }
 });
 
-window.oncontextmenu = function () {
+window.addEventListener('mouseup', (event) => {
+  if (event.button === 0) {
+    isLeftMouseDown = false;
+  } else if (event.button === 2) {
+    isRightMouseDown = false;
+  }
+});
+
+window.addEventListener('mousemove' , (event) => {
+  getMousePos(config.canvas, event);
+  if (isLeftMouseDown) {
+    newPlayer.breakBlock();
+  } else if (isRightMouseDown) {
     newPlayer.placeBlock(debugBlockColor);
+  }
+})
+
+window.oncontextmenu = function () {
     return false;     // cancel default menu
 }
 

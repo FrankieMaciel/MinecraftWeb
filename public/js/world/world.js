@@ -1,8 +1,11 @@
 import Chunk from './chunk.js';
 import config from '../config.js'
+import Block from './block.js';
 export default class World {
-  constructor(name) {
+  constructor(name, seed) {
     this.name = name;
+    if (seed) this.seed = seed;
+    else this.seed = Math.random();
     this.SufarceLevel = config.WorldMaxHeight / 2;
     this.chunks = new Map();
 
@@ -11,6 +14,37 @@ export default class World {
 
     this.create();
     this.getCenterScreen();
+  }
+
+  toJSON() {
+    const chunksData = Array.from(this.chunks).map(([chunkKey, chunkValue]) => {
+      const blocksData = Array.from(chunkValue.blocks).map(([blockKey, blockValue]) => {
+        // Serializar os dados do bloco aqui
+        return blockValue.toJSON();
+      });
+
+      return { chunkKey, blocks: blocksData };
+    });
+
+    return { chunks: chunksData };
+  }
+
+  static fromJSON(json) {
+    const mundo = new World();
+
+    for (const chunkData of json.chunks) {
+      const chunk = new Chunk(chunkData.chunkKey);
+
+      for (const blockData of chunkData.blocks) {
+        // Desserializar os dados do bloco e criar instâncias de blocos
+        const block = Block.fromJSON(blockData);
+        chunk.blocks.set(block.key, block);
+      }
+
+      mundo.chunks.set(chunk.key, chunk);
+    }
+
+    return mundo;
   }
 
   getCenterScreen() {
@@ -28,12 +62,13 @@ export default class World {
       {
         let BlockX = x * config.ChunkSizeX;
         let BlockY = y * config.ChunkSizeY;
-        new Chunk(BlockX, BlockY, this);
+        let newChunk = new Chunk(BlockX, BlockY, this);
+        this.chunks.set(`${BlockX} ${BlockY}`, newChunk);
       }
     }
   }
 
-  getBlockAt(x ,y) {
+  getBlockAt(x, y) {
     let ChunkX = Math.floor(x / config.ChunkSizeX) * config.ChunkSizeX;
     let ChunkY = Math.floor(y / config.ChunkSizeY) * config.ChunkSizeY;
 

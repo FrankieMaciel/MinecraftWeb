@@ -1,12 +1,11 @@
-export function caveNoise (x, y, smooth, intensity) {
+// import { noise } from '../noise/noise.js';
+
+export function caveNoise (seed, x, y, smooth, intensity) {
+  noise.seed(seed);
   let Xsmooth = x / smooth;
   let Ysmooth = y / smooth;
 
-  let ofsset = 200;
-  let Xsmooth2 = x / (smooth + ofsset);
-  let Ysmooth2 = y / (smooth + ofsset);
-
-  let noise = parseInt(perlin.get(Xsmooth, Ysmooth) * intensity);
-  let noise2 = parseInt(perlin.get(Xsmooth2 + ofsset, Ysmooth2 + ofsset) * intensity);
-  return (noise + noise2) / 2;
+  let noise1 = parseInt(noise.perlin2(Xsmooth, Ysmooth) * intensity);
+  let noise2 = parseInt(noise.perlin2(Xsmooth, Ysmooth) * (intensity * 2));
+  return (noise1 + noise2) / 2;
 }

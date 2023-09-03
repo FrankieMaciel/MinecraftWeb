@@ -86,7 +86,7 @@ export default class Player {
     let block = this.world.getBlockAt(this.MouseX, this.MouseY);
     if (block) blockAt = block.blockId;
 
-    let info = `Fps: ${fps} | x:${this.x} y:${this.y} | blockId: ${blockAt} | MouseX ${this.MouseX} MouseY ${this.MouseY}`;
+    let info = `Fps: ${fps} | x:${this.x} y:${this.y} | blockId: ${blockAt} | MouseX ${this.MouseX} MouseY ${this.MouseY} | Seed: ${this.world.seed}`;
 
     ctx.font = "16px monospace";
     ctx.fillStyle = "white";
@@ -142,6 +142,8 @@ export default class Player {
   }
 
   breakBlock() {
+    let block = this.world.getBlockAt(this.MouseX, this.MouseY);
+    if (block.blockId === 'game:limit') return;
     this.world.setBlockAt(this.MouseX, this.MouseY, "game:air");
   }
 

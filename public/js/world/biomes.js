@@ -6,10 +6,15 @@ import config from "../config.js";
 export function getBiome(x, y, block, world) {
 
   let newBlock = block;
+
+  if (y === config.WorldMaxHeight - 1) {
+    newBlock.change("game:limit");
+    return newBlock;
+  }
   
   let isSurface = y <= config.WorldMaxHeight / 2;
   
-  let generate = caveNoise(x * config.blockSize, y * config.blockSize, 40 * config.blockSize, 4);
+  let generate = caveNoise(world.seed, x, y, config.blockSize, 2.5);
   
   if (generate > 0) return block;
 
@@ -18,9 +23,9 @@ export function getBiome(x, y, block, world) {
   } else {
     newBlock.change("game:rock");
   }
-  
   let blockAtTop = world.getBlockAt(x, y - 1);
   if (!blockAtTop || !isSurface) return newBlock;
+  // console.log(blockAtTop);
 
   if (newBlock.blockId !== 'game:air' && blockAtTop.blockId === 'game:air') {
     newBlock.change("game:grass");
