@@ -9,15 +9,18 @@ export default class Block {
     this.blockId = blockId;
     this.color = getColor(this.blockId);
     this.size = config.blockSize;
+    this.isTangible = true;
+    if (this.blockId === 'game:creative') this.isTangible = false;
     chunk.blocks.set(`${x} ${y}`, this);
   }
 
   change(newId, debugColor) {
     this.blockId = newId;
     this.color = getColor(newId);
-    if (!newId)  {
+    if (newId === 'game:creative') {
+      this.isTangible = false;
       this.color = debugColor;
-    }
+    } 
   }
 
   render(chunkOffsetX, chunkOffsetY)

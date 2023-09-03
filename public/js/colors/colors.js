@@ -6,6 +6,7 @@ const middirt = '#9F8772';
 
 function getColor(id) {
   if (id === 'game:air') return null;
+  if (id === 'game:creative') return null;
   if (id === 'game:rock') return rock;
   if (id === 'game:dirt') return dirt;
   if (id === 'game:grass') return grass;

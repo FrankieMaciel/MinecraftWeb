@@ -93,7 +93,7 @@ let fps = 0;
 let mouseX = 0;
 let mouseY = 0;
 
-let debugBlockColor;
+let debugBlockColor = '#ffffff';
 
 function calculateFPS() {
   const currentTime = performance.now();

@@ -49,7 +49,7 @@ export default class Player {
     this.MouseX = 0;
     this.MouseY = 0;
 
-    this.HoldingBlockId = "game:rock";
+    this.HoldingBlockId = "game:creative";
 
     this.speed = config.movementAmount;
     this.jumpEnergy = 1;
@@ -57,6 +57,9 @@ export default class Player {
     this.enableGravity = true;
 
     this.hasCollide = false;
+
+    this.playerTexture = new Image();
+    this.playerTexture.src = '/img/player.png';
 
     this.camera = new Camera();
     this.world = world;
@@ -80,7 +83,7 @@ export default class Player {
 
   renderInfo(fps) {
     let blockAt = 'None';
-    let block = this.world.getBlockAt(this.x, this.y);
+    let block = this.world.getBlockAt(this.MouseX, this.MouseY);
     if (block) blockAt = block.blockId;
 
     let info = `Fps: ${fps} | x:${this.x} y:${this.y} | blockId: ${blockAt} | MouseX ${this.MouseX} MouseY ${this.MouseY}`;
@@ -113,7 +116,7 @@ export default class Player {
 
       let block = this.world.getBlockAt(hitX, hitY);
       if (!block) continue;
-      if (block.blockId !== 'game:air') {
+      if (block.blockId !== 'game:air' && block.isTangible) {
         this.hasCollide = true;
         break;
       } 
@@ -144,8 +147,7 @@ export default class Player {
 
   placeBlock(debugBlockColor) {
     let block = this.world.getBlockAt(this.MouseX, this.MouseY);
-    if (block.blockId !== "game:air") return;
-    if (debugBlockColor) this.HoldingBlockId = null;
+    if (block.blockId !== "game:air" && block.blockId !== "game:creative") return;
     this.world.setBlockAt(this.MouseX, this.MouseY, this.HoldingBlockId, debugBlockColor);
   }
 
@@ -180,7 +182,7 @@ export default class Player {
     let posX = (this.x - (this.camera.x - this.world.screenCenterX)) * config.blockSize;
     let posY = (this.y - (this.camera.y - this.world.screenCenterY)) * config.blockSize;
 
-    ctx.fillRect(posX - camMoveX, posY - camMoveX, this.SizeX, this.SizeY);
+    ctx.drawImage(this.playerTexture, posX - camMoveX, posY - camMoveX);
 
     this.renderInfo(fps);
   }
